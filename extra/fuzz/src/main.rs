@@ -21,8 +21,8 @@ const JSON: &str = r#"
 fn main() {
     fuzz!(|data: &[u8]| {
         if let Ok(s) = from_utf8(data) {
-            let _ = from_utf8(gjson::get(s, s).raw().as_bytes()).unwrap();
-            let _ = from_utf8(gjson::get(JSON, s).raw().as_bytes()).unwrap();
+            let _ = from_utf8(gjson::get(s, s).json().as_bytes()).unwrap();
+            let _ = from_utf8(gjson::get(JSON, s).json().as_bytes()).unwrap();
         }
     });
 }

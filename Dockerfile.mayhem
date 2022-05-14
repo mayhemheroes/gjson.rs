@@ -1,0 +1,21 @@
+# Use the example in Mayhem Docs as an example/starting point
+FROM rust:1.60-buster as rust-builder
+RUN cargo install afl
+
+# Add the source code to the image and build the target
+ADD . /gjson.rs
+WORKDIR /gjson.rs/extra/fuzz
+RUN cargo afl build
+# Built target is: /gjson.rs/extra/fuzz/target/debug/fuzz
+
+# To simplify matters, we'll copy the compiled target as well as
+# the fuzz input folder to a new image with AFL. This helps save some space.
+FROM --platform=linux/amd64 rust:1.60-buster
+RUN cargo install afl
+
+# Copy the compiled target and the input cases
+COPY --from=rust-builder /gjson.rs/extra/fuzz/target/debug/fuzz /gjson.rs/extra/fuzz/in /
+
+# Set to fuzz!
+ENTRYPOINT ["cargo", "afl", "fuzz", "-i", "/in", "-o", "/out"]
+CMD ["/fuzz"]

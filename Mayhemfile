@@ -1,0 +1,9 @@
+project: gjson-rs
+target: main-fuzz
+duration: 300
+
+cmds:
+  - cmd: /fuzz
+    env:
+      DISABLE_SMOKETEST: '1'
+    afl: true

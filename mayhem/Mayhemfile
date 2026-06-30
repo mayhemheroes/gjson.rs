@@ -1,0 +1,15 @@
+project: gjson-rs
+target: main-fuzz
+duration: 300
+
+cmds:
+  - cmd: /mayhem/gjson_fuzz
+    libfuzzer: true
+
+# Benign seed corpus (valid JSON docs + valid gjson query paths). Ships in-image at
+# /mayhem/mayhem/seeds (Dockerfile COPYs the repo to /mayhem). Without a local testsuite,
+# the first run has no server-side testsuite.tar to fetch, so the regression_testing
+# smoketest fails and the run is flagged has_critical_errors — these seeds give regression
+# a corpus to replay cleanly (and seed coverage for behavior_testing).
+testsuite:
+  - file:///mayhem/mayhem/seeds

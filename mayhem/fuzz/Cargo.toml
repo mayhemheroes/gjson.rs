@@ -1,0 +1,29 @@
+# Additive cargo-fuzz crate (libfuzzer-sys 0.4). Lives ONLY under mayhem/ — upstream's
+# Cargo.toml / source are left untouched. Exercises gjson's public parse/query API on
+# arbitrary bytes (the same surface the upstream afl harness drives: gjson::get + .raw()).
+[package]
+name = "gjson-mayhem-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2018"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+
+[dependencies.gjson]
+# upstream crate at the repo root (two levels up from mayhem/fuzz/)
+path = "../.."
+
+# cargo-fuzz builds each target as its own binary.
+[[bin]]
+name = "gjson_fuzz"
+path = "fuzz_targets/gjson_fuzz.rs"
+test = false
+doc = false
+
+# Keep the fuzz crate out of the workspace so it never perturbs upstream's build graph
+# (upstream has no [workspace]; this stops cargo from auto-including the path dep oddly).
+[workspace]
